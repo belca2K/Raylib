@@ -1,0 +1,1 @@
+Olá, esse projeto é um piloto de jogo no raylib so de brincadeirinha. x
