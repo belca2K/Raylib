@@ -4,8 +4,9 @@
 typedef struct
 {
     float x,y;
-    int speed_x, speed_y;
+    int speed_x, speed_y; //speed_x was a mistake, but I will let it be in case I change my mind
     float radius;
+    int score_player1, score_player2;
 }Ball;
 typedef struct
 {
@@ -21,11 +22,17 @@ void ballUpdate(Ball *ball);
 void player1Update(Paddle *paddle);
 void player2Update(Paddle *paddle);
 void cpuUpdate(Paddle *paddle, Ball ball);
+void resetBall(Ball *ball);
 
 int main ()
 {
     const int screen_width=1280;
     const int screen_height=800;
+
+    Color Green = {38, 185, 154,255};
+    Color Dark_Green = {20, 160, 133,255};
+    Color Light_Green = {129, 204, 184,255};
+    Color Yellow = {243, 213, 91,255};
 
     Ball ball;
     ball.x = screen_width/2;
@@ -33,6 +40,8 @@ int main ()
     ball.speed_x = 7;
     ball.speed_y = 7;
     ball.radius = 20;
+    ball.score_player1=0;
+    ball.score_player2=0;
 //initialize left player
     Paddle paddle[2];
     paddle[player1].x=10;
@@ -64,19 +73,23 @@ int main ()
         //checar colisoes
         if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}))
         {
-            ball.speed_x *= -1;
+            ball.speed_x *= -1.1;
+            paddle[player1].speed_y += 0.5;
         }
-   
         if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}))
         {
             ball.speed_x *= -1;
         }
       
-        ClearBackground(BLACK);
+        ClearBackground(Dark_Green);
+        DrawRectangle(screen_width/2, 0, screen_width/2, screen_height, Green);
+        DrawCircle(screen_width/2, screen_height/2, 150, Light_Green);
         DrawLine(screen_width/2, 0, screen_width/2, screen_height, WHITE);
-        DrawRectangle(paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height, WHITE);
-        DrawRectangle(paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height, WHITE);
-        DrawCircle(ball.x, ball.y, ball.radius, WHITE);
+        DrawRectangleRounded((Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}, 1, 0, WHITE);
+        DrawRectangleRounded((Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}, 1, 0, WHITE);
+        DrawCircle(ball.x, ball.y, ball.radius, Yellow);
+        DrawText(TextFormat("%i", ball.score_player1), screen_width/4 -20, 20, 80, WHITE);
+        DrawText(TextFormat("%i", ball.score_player2), 3*screen_width/4 -20, 20, 80, WHITE);
 
         EndDrawing();
     }
@@ -93,10 +106,25 @@ void ballUpdate(Ball *ball)
     {
         ball->speed_y *= -1;
     }
-    if(ball->x + ball->radius >=GetScreenWidth() || ball->x - ball->radius <=0)
+    if(ball->x + ball->radius >=GetScreenWidth())
     {
-        ball->speed_x *= -1;
+        ball->score_player1++;
+        resetBall(ball);
     }
+    if(ball->x - ball->radius <=0)
+    {
+        ball->score_player2++;
+        resetBall(ball);
+    }
+}
+void resetBall(Ball *ball)
+{
+    ball->y = GetScreenHeight()/2;
+    ball->x = GetScreenWidth()/2;
+
+    int speed_choices[2] = {-1, 1};
+    ball->speed_x *= speed_choices[GetRandomValue(0,1)];
+    ball->speed_y *= speed_choices[GetRandomValue(0,1)];
 }
 
 void player1Update(Paddle *paddle)
@@ -105,11 +133,6 @@ void player1Update(Paddle *paddle)
     if(IsKeyDown(KEY_S))    paddle->y += paddle->speed_y;
     if(paddle->y + paddle->height >= GetScreenHeight())paddle->y = GetScreenHeight() - paddle->height;
     if(paddle->y <= 0) paddle->y = 0;
-    //mexer na horizontal
-    if(IsKeyDown(KEY_A))    paddle->x -= paddle->speed_x;
-    if(IsKeyDown(KEY_D))    paddle->x += paddle->speed_x;
-    if(paddle->x <= 0)      paddle->x = 0;
-    if(paddle->x + paddle->width >= GetScreenWidth()/2) paddle->x = GetScreenWidth()/2 - paddle->width;
 }
 void player2Update(Paddle *paddle)
 {   //mexer na vertical
@@ -117,11 +140,7 @@ void player2Update(Paddle *paddle)
     if(IsKeyDown(KEY_DOWN))    paddle->y += paddle->speed_y;
     if(paddle->y + paddle->height >= GetScreenHeight())paddle->y = GetScreenHeight() - paddle->height;
     if(paddle->y <= 0) paddle->y = 0;
-    //mexer na horizontal
-    if(IsKeyDown(KEY_LEFT))    paddle->x -= paddle->speed_x;
-    if(IsKeyDown(KEY_RIGHT))    paddle->x += paddle->speed_x;
-    if(paddle->x <= GetScreenWidth()/2) paddle->x = GetScreenWidth()/2;      
-    if(paddle->x + paddle->width >= GetScreenWidth()) paddle->x = GetScreenWidth() - paddle->width;
+
 }
 void cpuUpdate(Paddle *paddle, Ball ball) //mini IA  pra jogar contra a maquina
 {
