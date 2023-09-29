@@ -14,7 +14,6 @@ int main(void)
 
     const char msg1[50] = "MENU";
     const char msg2[50] = "...Pressione [ENTER] para jogar...";
-    const char msg3[50] = "...and a THIRD one! GREAT! :D";
 
     Font font = LoadFont("C:\\raylib\\raylib\\examples\\text\\resources\\custom_alagard.png");        // Font loading
 
