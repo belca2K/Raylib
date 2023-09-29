@@ -85,8 +85,8 @@ int main ()
         DrawRectangle(screen_width/2, 0, screen_width/2, screen_height, Green);
         DrawCircle(screen_width/2, screen_height/2, 150, Light_Green);
         DrawLine(screen_width/2, 0, screen_width/2, screen_height, WHITE);
-        DrawRectangleRounded((Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}, 1, 0, WHITE);
-        DrawRectangleRounded((Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}, 1, 0, WHITE);
+        DrawRectangleRounded((Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}, 1, 0, MAROON);
+        DrawRectangleRounded((Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}, 1, 0, DARKBLUE);
         DrawCircle(ball.x, ball.y, ball.radius, Yellow);
         DrawText(TextFormat("%i", ball.score_player1), screen_width/4 -20, 20, 80, WHITE);
         DrawText(TextFormat("%i", ball.score_player2), 3*screen_width/4 -20, 20, 80, WHITE);

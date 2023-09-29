@@ -18,8 +18,8 @@ enum paddles {
     player1, player2
 }; //left and right
 enum game_phases{
-    menu, gameplay_choice, game_pvp, game_pve , win_screen, lose_screen
-}; // 1         2             3            4          5          6
+    menu, gameplay_choice, game_pvp, game_pve , final_screen
+}; // 1         2             3            4        5
 
 void ballUpdate(Ball *ball);
 void player1Update(Paddle *paddle);
@@ -89,11 +89,29 @@ int main ()
     Texture2D texture = LoadTextureFromImage(radialGradient);
     UnloadImage(radialGradient);
 //------------------------------------
+//GAMEWIN TEXTS-------------------------------------------------------------------------------------------------------
+    const char msg5[50] = "O player 1 venceu!";
+    const char msg6[50] = "O player 2 venceu!";
+    const char msg7[50] = "...Pressione [ENTER] para jogar novamente...";
+    const char msg8[50] = "   Voce venceu!!";
+    const char msg9[50] = "   Voce perdeu :(";
+    Vector2 fontPosition5 = { screen_width/2.0f - MeasureTextEx(font, msg5, (float)font.baseSize*2, -3).x/2,
+                            screen_height/2-font.baseSize/2.0f};
+
+    Vector2 fontPosition7 = { screen_width/2.0f - MeasureTextEx(font, msg7, (float)font.baseSize, -2.0f).x/2.0f,
+                              screen_height/2.0f + font.baseSize/2.0f + 100.0f };
+    Image radialGradient1 = GenImageGradientRadial(screen_width, screen_height, 0.0f, WHITE, MAROON);
+    Texture2D texture1 = LoadTextureFromImage(radialGradient1);
+    UnloadImage(radialGradient1);
+    Image radialGradient2 = GenImageGradientRadial(screen_width, screen_height, 0.0f, WHITE, SKYBLUE);
+    Texture2D texture2 = LoadTextureFromImage(radialGradient2);
+    UnloadImage(radialGradient2);
+//----------------------------------------------------------------------------------------------------------------------
     SetTargetFPS(60);
 
     while(!WindowShouldClose())
     {
-        BeginDrawing();
+    BeginDrawing();
     switch(game_phase)
     {      
         case menu:
@@ -128,7 +146,7 @@ int main ()
             player2Update(&paddle[player2]);
             if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}))
             {
-                ball.speed_x *= -1;
+                ball.speed_x *= -1.1;
             }
             if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}))
             {
@@ -152,7 +170,7 @@ int main ()
             if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}))
             {
                 ball.speed_x *= -1.15;
-                paddle[player1].speed_y += 0.5;
+                paddle[player1].speed_y += 0.6;
             }
             if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}))
             {
@@ -162,13 +180,59 @@ int main ()
             DrawRectangle(screen_width/2, 0, screen_width/2, screen_height, Green);
             DrawCircle(screen_width/2, screen_height/2, 150, Light_Green);
             DrawLine(screen_width/2, 0, screen_width/2, screen_height, WHITE);
-            DrawRectangleRounded((Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}, 1, 0, WHITE);
-            DrawRectangleRounded((Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}, 1, 0, WHITE);
+            DrawRectangleRounded((Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}, 1, 0, MAROON);
+            DrawRectangleRounded((Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}, 1, 0, DARKBLUE);
             DrawCircle(ball.x, ball.y, ball.radius, Yellow);
             DrawText(TextFormat("%i", ball.score_player1), screen_width/4 -20, 20, 80, WHITE);
             DrawText(TextFormat("%i", ball.score_player2), 3*screen_width/4 -20, 20, 80, WHITE);
+
+            if(ball.score_player1 >= 3 || ball.score_player2>=3) game_phase = final_screen;
         }break;
-    }
+        case final_screen:
+        {
+            if(choice==3)//single player
+            {
+                if(ball.score_player1>ball.score_player2) 
+                {
+                ClearBackground(RAYWHITE);
+                DrawTexture(texture1, 0, 0, WHITE);
+                DrawTextEx(font, msg8, fontPosition5, (float)font.baseSize * 2, -3, WHITE);
+                DrawTextEx(font, msg7, fontPosition7, (float)font.baseSize, -2, WHITE);
+                }
+                else if(ball.score_player2>ball.score_player1)
+                {
+                ClearBackground(RAYWHITE);
+                DrawTexture(texture2, 0, 0, WHITE);
+                DrawTextEx(font, msg9, fontPosition5, (float)font.baseSize * 2, -3, WHITE);
+                DrawTextEx(font, msg7, fontPosition7, (float)font.baseSize, -2, WHITE);
+                }
+            }
+            else if(choice==2) //mutiplayer
+            {
+                if(ball.score_player1>ball.score_player2) 
+                {
+                ClearBackground(RAYWHITE);
+                DrawTexture(texture1, 0, 0, WHITE);
+                DrawTextEx(font, msg5, fontPosition5, (float)font.baseSize * 2, -3, WHITE);
+                DrawTextEx(font, msg7, fontPosition7, (float)font.baseSize, -2, WHITE);
+                }
+                else if(ball.score_player2>ball.score_player1)
+                {
+                ClearBackground(RAYWHITE);
+                DrawTexture(texture2, 0, 0, WHITE);
+                DrawTextEx(font, msg6, fontPosition5, (float)font.baseSize * 2, -3, WHITE);
+                DrawTextEx(font, msg7, fontPosition7, (float)font.baseSize, -2, WHITE);
+                }
+            }
+
+            if(IsKeyPressed(KEY_ENTER))
+            {
+                game_phase = choice;
+                ball.score_player1 = 0;
+                ball.score_player2 = 0;
+            }
+        }break;
+        }
         EndDrawing();
     }
 
@@ -205,8 +269,8 @@ void resetBall(Ball *ball)
     ball->x = GetScreenWidth()/2;
 
     int speed_choices[2] = {-1, 1};
-    ball->speed_x *= speed_choices[GetRandomValue(0,1)];
-    ball->speed_y *= speed_choices[GetRandomValue(0,1)];
+    ball->speed_x = 7*speed_choices[GetRandomValue(0,1)];
+    ball->speed_y = 7*speed_choices[GetRandomValue(0,1)];
 }
 
 void player1Update(Paddle *paddle)
