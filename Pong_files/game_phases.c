@@ -45,7 +45,7 @@ int main ()
     ball.radius = 20;
     ball.score_player1=0;
     ball.score_player2=0;
-//initialize left player
+//initialize left player--------------------------------------------------------------------------------------------
     Paddle paddle[2];
     paddle[player1].x=10;
     paddle[player1].y=screen_height/2 - 60;
@@ -53,18 +53,18 @@ int main ()
     paddle[player1].height= 120;
     paddle[player1].speed_x=2;
     paddle[player1].speed_y=6;
-//initialize right player
+//initialize right player---------------------------------------------------------------------------------------------
     paddle[player2].x=screen_width - 35;
     paddle[player2].y=screen_height/2 - 60;
     paddle[player2].width=25;
     paddle[player2].height=120;
     paddle[player2].speed_x=2;
     paddle[player2].speed_y=6;
-//game phases
+//game phases---------------------------------------------------------------------------------------------------------
     int game_phase=0;
     int choice; //variavel p ver se vai pro pve ou pro pvp
     InitWindow(screen_width, screen_height, "Pongpong");
-//menu things
+//menu things---------------------------------------------------------------------------------------------------------
     const char msg1[50] = "MENU";
     const char msg2[50] = "...Pressione [ENTER] para jogar...";
 
@@ -75,6 +75,15 @@ int main ()
 
     Vector2 fontPosition2 = { screen_width/2.0f - MeasureTextEx(font, msg2, (float)font.baseSize, -2.0f).x/2.0f,
                               screen_height/2.0f - font.baseSize/2.0f - 10.0f };
+//gamechoice things---------------------------------------------------------------------------------------------------
+    const char msg3[50] = "       Pressione [F1]\npara jogar singleplayer...";
+    const char msg4[50] = "       Pressione [F2]\npara jogar multiplayer...";
+    Vector2 fontPosition3 = { screen_width/4.0f - MeasureTextEx(font, msg3, (float)font.baseSize, -3).x/2,
+                            screen_height/2.0f - font.baseSize/2.0f};
+
+    Vector2 fontPosition4 = { screen_width/1.33f - MeasureTextEx(font, msg4, (float)font.baseSize, -2.0f).x/2.0f,
+                              screen_height/2.0f - font.baseSize/2.0f};
+//--------------------------------------------------------------------------------------------------------------------
     
     Image radialGradient = GenImageGradientRadial(screen_width, screen_height, 0.0f, WHITE, BLACK);
     Texture2D texture = LoadTextureFromImage(radialGradient);
@@ -97,7 +106,20 @@ int main ()
         }break;
         case gameplay_choice: 
         {
-
+            ClearBackground(SKYBLUE);
+            DrawRectangle(screen_width/2, 0, screen_width/2, screen_height, MAROON);
+            DrawTextEx(font, msg3, fontPosition3, (float)font.baseSize, -3, WHITE);
+            DrawTextEx(font, msg4, fontPosition4, (float)font.baseSize, -2, WHITE);
+            if(IsKeyPressed(KEY_F1))
+            {
+                choice=3;
+                game_phase=choice;
+            }
+            else if(IsKeyPressed(KEY_F2))
+            {  
+                choice=2;
+                game_phase=choice;
+            }
         }break;
         case game_pvp:
         {   //atualizar as posições
