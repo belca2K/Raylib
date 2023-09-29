@@ -19,7 +19,7 @@ enum paddles {
 }; //left and right
 enum game_phases{
     menu, gameplay_choice, game_pvp, game_pve , win_screen, lose_screen
-};
+}; // 1         2             3            4          5          6
 
 void ballUpdate(Ball *ball);
 void player1Update(Paddle *paddle);
@@ -62,6 +62,7 @@ int main ()
     paddle[player2].speed_y=6;
 //game phases
     int game_phase=0;
+    int choice; //variavel p ver se vai pro pve ou pro pvp
     InitWindow(screen_width, screen_height, "Pongpong");
 //menu things
     const char msg1[50] = "MENU";
@@ -84,16 +85,21 @@ int main ()
     while(!WindowShouldClose())
     {
         BeginDrawing();
-            
-        if(game_phase == menu)
+    switch(game_phase)
+    {      
+        case menu:
         {
             ClearBackground(RAYWHITE);
             DrawTexture(texture, 0, 0, WHITE);
             DrawTextEx(font, msg1, fontPosition1, (float)font.baseSize * 3, -3, WHITE);
             DrawTextEx(font, msg2, fontPosition2, (float)font.baseSize, -2, WHITE);
             if(IsKeyPressed(KEY_ENTER)) game_phase++;
-        }
-        else if(game_phase == game_pvp)
+        }break;
+        case gameplay_choice: 
+        {
+
+        }break;
+        case game_pvp:
         {   //atualizar as posições
             ballUpdate(&ball);
             player1Update(&paddle[player1]);
@@ -115,8 +121,9 @@ int main ()
             DrawCircle(ball.x, ball.y, ball.radius, Yellow);
             DrawText(TextFormat("%i", ball.score_player1), screen_width/4 -20, 20, 80, WHITE);
             DrawText(TextFormat("%i", ball.score_player2), 3*screen_width/4 -20, 20, 80, WHITE);
-        }
-        else if(game_phase == game_pve){
+        }break;
+        case game_pve:
+        {
             ballUpdate(&ball);
             player1Update(&paddle[player1]);
             cpuUpdate(&paddle[player2], ball);
@@ -138,7 +145,8 @@ int main ()
             DrawCircle(ball.x, ball.y, ball.radius, Yellow);
             DrawText(TextFormat("%i", ball.score_player1), screen_width/4 -20, 20, 80, WHITE);
             DrawText(TextFormat("%i", ball.score_player2), 3*screen_width/4 -20, 20, 80, WHITE);
-        }
+        }break;
+    }
         EndDrawing();
     }
 
