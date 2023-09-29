@@ -60,6 +60,9 @@ int main ()
 
     InitWindow(screen_width, screen_height, "Pongpong");
     SetTargetFPS(60);
+
+    InitAudioDevice();
+    Sound popup = LoadSound("C:\\Users\\bruno\\Desktop\\Pong\\Pong_files\\resources\\popup.wav");
     
     while(!WindowShouldClose())
     {
@@ -73,11 +76,13 @@ int main ()
         //checar colisoes
         if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}))
         {
+            PlaySound(popup);
             ball.speed_x *= -1.1;
             paddle[player1].speed_y += 0.5;
         }
         if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}))
-        {
+        {   
+            PlaySound(popup);
             ball.speed_x *= -1;
         }
       
@@ -93,6 +98,8 @@ int main ()
 
         EndDrawing();
     }
+    UnloadSound(popup);
+    CloseAudioDevice();
     CloseWindow();
     return 0;
 }

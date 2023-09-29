@@ -60,6 +60,9 @@ int main ()
 
     InitWindow(screen_width, screen_height, "Pongpong");
     SetTargetFPS(60);
+
+    InitAudioDevice();
+    Sound popup = LoadSound("C:\\Users\\bruno\\Desktop\\Pong\\Pong_files\\resources\\popup.wav");
     
     while(!WindowShouldClose())
     {
@@ -73,11 +76,13 @@ int main ()
         //checar colisoes
         if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}))
         {
-            ball.speed_x *= -1.15;
+            PlaySound(popup);
+            ball.speed_x *= -1.1;
             paddle[player1].speed_y += 0.5;
         }
         if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}))
-        {
+        {   
+            PlaySound(popup);
             ball.speed_x *= -1;
         }
       
@@ -85,14 +90,16 @@ int main ()
         DrawRectangle(screen_width/2, 0, screen_width/2, screen_height, Green);
         DrawCircle(screen_width/2, screen_height/2, 150, Light_Green);
         DrawLine(screen_width/2, 0, screen_width/2, screen_height, WHITE);
-        DrawRectangleRounded((Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}, 1, 0, MAROON);
-        DrawRectangleRounded((Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}, 1, 0, DARKBLUE);
+        DrawRectangleRounded((Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}, 1, 0, WHITE);
+        DrawRectangleRounded((Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}, 1, 0, WHITE);
         DrawCircle(ball.x, ball.y, ball.radius, Yellow);
         DrawText(TextFormat("%i", ball.score_player1), screen_width/4 -20, 20, 80, WHITE);
         DrawText(TextFormat("%i", ball.score_player2), 3*screen_width/4 -20, 20, 80, WHITE);
 
         EndDrawing();
     }
+    UnloadSound(popup);
+    CloseAudioDevice();
     CloseWindow();
     return 0;
 }
@@ -123,8 +130,8 @@ void resetBall(Ball *ball)
     ball->x = GetScreenWidth()/2;
     
     int speed_choices[2] = {-1, 1};
-    ball->speed_x = 7*speed_choices[GetRandomValue(0,1)];
-    ball->speed_y = 7*speed_choices[GetRandomValue(0,1)];
+    ball->speed_x *= 7*speed_choices[GetRandomValue(0,1)];
+    ball->speed_y *= 7*speed_choices[GetRandomValue(0,1)];
 }
 
 void player1Update(Paddle *paddle)

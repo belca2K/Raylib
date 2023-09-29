@@ -107,6 +107,10 @@ int main ()
     Texture2D texture2 = LoadTextureFromImage(radialGradient2);
     UnloadImage(radialGradient2);
 //----------------------------------------------------------------------------------------------------------------------
+//MUSIC AND SOUNDS EFFECTS!!--------------------------------------------------------------------------------------------
+    InitAudioDevice();
+    Sound popup = LoadSound("C:\\Users\\bruno\\Desktop\\Pong\\Pong_files\\resources\\popup.wav");
+//----------------------------------------------------------------------------------------------------------------------
     SetTargetFPS(60);
 
     while(!WindowShouldClose())
@@ -146,10 +150,12 @@ int main ()
             player2Update(&paddle[player2]);
             if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}))
             {
+                PlaySound(popup);
                 ball.speed_x *= -1.1;
             }
             if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}))
             {
+                PlaySound(popup);
                 ball.speed_x *= -1;
             }
             ClearBackground(Dark_Green);
@@ -169,11 +175,13 @@ int main ()
             cpuUpdate(&paddle[player2], ball);
             if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player1].x, paddle[player1].y, paddle[player1].width, paddle[player1].height}))
             {
+                PlaySound(popup);
                 ball.speed_x *= -1.15;
                 paddle[player1].speed_y += 0.6;
             }
             if(CheckCollisionCircleRec((Vector2){ball.x, ball.y}, ball.radius,(Rectangle){paddle[player2].x, paddle[player2].y, paddle[player2].width, paddle[player2].height}))
             {
+                PlaySound(popup);
                 ball.speed_x *= -1;
             }
             ClearBackground(Dark_Green);
