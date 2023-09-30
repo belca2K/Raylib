@@ -110,16 +110,37 @@ int main ()
 //MUSIC AND SOUNDS EFFECTS!!--------------------------------------------------------------------------------------------
     InitAudioDevice();
     Sound popup = LoadSound("C:\\Users\\bruno\\Desktop\\Pong\\Pong_files\\resources\\popup.wav");
+    Music gameplay = LoadMusicStream("C:\\Users\\bruno\\Desktop\\Pong\\Pong_files\\resources\\gameplay.mp3");
+    Music menuM = LoadMusicStream("C:\\Users\\bruno\\Desktop\\Pong\\Pong_files\\resources\\menu.mp3");
+    PlayMusicStream(gameplay);
+    PlayMusicStream(menuM);
+    SetMusicVolume(gameplay, 0.15f);
+    SetMusicVolume(menuM, 0.6f);
+    SetSoundVolume(popup, 0.4f);
 //----------------------------------------------------------------------------------------------------------------------
+    bool playing = false;
     SetTargetFPS(60);
 
     while(!WindowShouldClose())
     {
+    if(playing==true)
+    {
+        StopMusicStream(gameplay);
+        PlayMusicStream(menuM);
+        UpdateMusicStream(menuM);
+    }
+    else if(playing==false)
+    {
+        StopMusicStream(menuM);
+        PlayMusicStream(gameplay);
+        UpdateMusicStream(gameplay);
+    }
     BeginDrawing();
     switch(game_phase)
     {      
         case menu:
         {
+            playing = true;
             ClearBackground(RAYWHITE);
             DrawTexture(texture, 0, 0, WHITE);
             DrawTextEx(font, msg1, fontPosition1, (float)font.baseSize * 3, -3, WHITE);
@@ -128,6 +149,7 @@ int main ()
         }break;
         case gameplay_choice: 
         {
+            playing = true;
             ClearBackground(SKYBLUE);
             DrawRectangle(screen_width/2, 0, screen_width/2, screen_height, MAROON);
             DrawTextEx(font, msg3, fontPosition3, (float)font.baseSize, -3, WHITE);
@@ -145,6 +167,7 @@ int main ()
         }break;
         case game_pvp:
         {   //atualizar as posições
+            playing = false;
             ballUpdate(&ball);
             player1Update(&paddle[player1]);
             player2Update(&paddle[player2]);
@@ -170,6 +193,7 @@ int main ()
         }break;
         case game_pve:
         {
+            playing = false;
             ballUpdate(&ball);
             player1Update(&paddle[player1]);
             cpuUpdate(&paddle[player2], ball);
@@ -198,6 +222,7 @@ int main ()
         }break;
         case final_screen:
         {
+            playing = true;
             if(choice==3)//single player
             {
                 if(ball.score_player1>ball.score_player2) 
@@ -243,6 +268,9 @@ int main ()
         }
         EndDrawing();
     }
+    UnloadMusicStream(gameplay);
+    UnloadMusicStream(menuM);
+    UnloadSound(popup);
 
     UnloadTexture(texture);
     UnloadFont(font);// Font unloading
